@@ -16,7 +16,9 @@ max_distance=37
 try_number = 0
 anti_email = 0
 empty_container = 0
-receiver = ["vanjermancek@gmail.com", "natasak@sanis.si"]
+sender_email = "HERE GOES SENDER EMAIL"
+sender_password = "HERE GOES SENDER PASSWORD"
+receiver = ["HERE GOES FIRST (main) RECEIVER EMAIL", "HERE GOES SECOND RECEIVER EMAIL"]
 
 try:
 	def sensor(callback_id, current_time, callback_memory):
@@ -32,7 +34,7 @@ try:
 			if percentage <= 3:
 				print("Prenizka razdalja: {}% / {}cm".format(percentage, distance_avg))
 				try_number += 1
-				mail("prva NAPAKA V MERITVI: {}%".format(100-percentage), distance_avg, "vanjermancek@gmail.com")
+				mail("prva NAPAKA V MERITVI: {}%".format(100-percentage), distance_avg, receiver[0])
 			elif percentage > 3 and percentage < 90:
 				print("Razdalja: {}% / {}cm".format(percentage, distance_avg))
 			elif percentage >= 90 and percentage < 95:
@@ -48,15 +50,15 @@ try:
 			elif percentage > 110:
 				try_number += 1
 				print("Sedaj je previsoka razdalja: {}% / {}cm".format(percentage, distance_avg))
-				mail("prva NAPAKA V MERITVI: {}%".format(100-percentage), distance_avg, "vanjermancek@gmail.com")
+				mail("prva NAPAKA V MERITVI: {}%".format(100-percentage), distance_avg, receiver[0])
 			else:
 				print("Nekai je narobe pri procentih, try_number == 0")
-				mail("Nekai je narobe pri: if try_number == 1:", distance_avg, "vanjermancek@gmail.com")
+				mail("Nekai je narobe pri: if try_number == 1:", distance_avg, receiver[0])
 
 		elif try_number == 1 and anti_email == 0 and empty_container == 0:
 			if percentage <= 3:
 				print("Ponovno prenizka razdalja: {}% / {}cm".format(percentage, distance_avg))
-				mail("PONOVNO NAPAKA V MERITVI: {}%".format(100-percentage), distance_avg, "vanjermancek@gmail.com")
+				mail("PONOVNO NAPAKA V MERITVI: {}%".format(100-percentage), distance_avg, receiver[0])
 				anti_email += 1
 			elif percentage > 3 and percentage < 90:
 				print("Razdalja: {}% / {}cm".format(percentage, distance_avg))
@@ -73,20 +75,20 @@ try:
 				mail("PEČKA JE PRAZNA: 100%", distance_avg, receiver)
 			elif percentage > 110:
 				print("Sedaj je previsoka razdalja: {}% / {}cm".format(percentage, distance_avg))
-				mail("PONOVNO NAPAKA V MERITVI: {}%".format(100-percentage), distance_avg, "vanjermancek@gmail.com")
+				mail("PONOVNO NAPAKA V MERITVI: {}%".format(100-percentage), distance_avg, receiver[0])
 				anti_email += 1
 			else:
 				print("Nekai je narobe pri: if try_number == 1:")
-				mail("Nekai je narobe pri: if try_number == 1:", distance_avg, "vanjermancek@gmail.com")
+				mail("Nekai je narobe pri: if try_number == 1:", distance_avg, receiver[0])
 				anti_email += 1
 		elif try_number == 1 and anti_email == 1 and empty_container == 0:
 			if percentage > 3 and percentage <= 110:
 				print("Ponovno pravilno izmerilo")
-				mail("PRAVILNO IZMERILO: {}%".format(100-percentage), distance_avg, "vanjermancek@gmail.com")
+				mail("PRAVILNO IZMERILO: {}%".format(100-percentage), distance_avg, receiver[0])
 				try_number = 0
 				anti_email = 0
 			else:
-				mail("+3x NAPAKA V MERITVI: {}%".format(100-percentage), distance_avg, "vanjermancek@gmail.com")
+				mail("+3x NAPAKA V MERITVI: {}%".format(100-percentage), distance_avg, receiver[0])
 				print(percentage)
 				print(distance_avg)
 		elif empty_container == 1:
@@ -125,9 +127,9 @@ try:
 
 	def mail(machine, distance, receiver):
 	    smtp = umail.SMTP('smtp.gmail.com', 465, ssl=True) # Gmail's SSL port
-	    smtp.login('home.automation.seca.179@gmail.com', 'jermancekk123')
+	    smtp.login(sender_email, sender_password)
 	    smtp.to(receiver)
-	    smtp.write("From: {} <home.automation.seca.179@gmail.com>\n".format(machine))
+	    smtp.write("From: {} <{}>\n".format(machine, sender_email))
 	    smtp.write("Subject: Čas je za dofilat pelete!\n\n")
 	    smtp.write("Kmalu bo zmanjkalo pelet. Razdalja: {}cm\n".format(distance))
 	    smtp.send()
